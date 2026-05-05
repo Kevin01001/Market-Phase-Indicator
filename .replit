@@ -1,0 +1,69 @@
+modules = ["nodejs-24", "python-3.11"]
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Telegram Bot (@Forexrama_bot)"
+
+[[workflows.workflow]]
+name = "Telegram Bot (@Forexrama_bot)"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 bot.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[agent]
+stack = "PNPM_WORKSPACE"
+expertMode = true
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 80
+
+[[ports]]
+localPort = 21194
+externalPort = 3001
+
+[[ports]]
+localPort = 22226
+externalPort = 3000
+
+[[ports]]
+localPort = 25980
+externalPort = 3002
+
+[nix]
+channel = "stable-25_05"
+packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "gobject-introspection", "gtk3", "pkg-config", "qhull", "tcl", "tk"]
+
+[userenv]
+
+[userenv.shared]
+VITE_CLERK_PUBLISHABLE_KEY = "pk_test_d2FudGVkLXF1YWlsLTM4LmNsZXJrLmFjY291bnRzLmRldiQ"
